@@ -7,9 +7,6 @@ from Environment import Env
 from Agent import Agent
 from State import State
 
-# TODO: fix the fucking code for fuck sake you fucking peace of fuck
-
-
 stdscr = curses.initscr()
 def draw_board(stdscr, board):
     stdscr.clear()
@@ -46,7 +43,7 @@ def list2board(board):
 
 
 # create the game and insert agents
-env = Env(length=18, height=9, difficulty=0)
+env = Env(length=18, height=9, difficulty=1)
 
 pacman = Agent(type="pacman", pos=[4, 4])
 ghost1 = Agent(type="ghost", pos=[4, 5])
@@ -74,8 +71,10 @@ while not state.is_terminal():
     action = mini_max.get_action(state=state)
 
     env.step(action=action,agent=pacman)
-    env.step(action=random.choice(actions),agent=ghost1)
-    env.step(action=random.choice(actions),agent=ghost2)
+    ghost1_moves = ghost1.possible_moves(env)
+    ghost2_moves = ghost2.possible_moves(env)
+    env.step(action=random.choice(ghost1_moves),agent=ghost1)
+    env.step(action=random.choice(ghost2_moves),agent=ghost2)
     state = State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
 draw_board(stdscr=stdscr,board=list2board(env.board))
 # draw_board(stdscr=stdscr,board=["done"])

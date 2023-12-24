@@ -13,17 +13,17 @@ class Agent:
         for action in moves:
             match action:
                 case "right":
-                    if not env.is_wall([self.pos[0],((self.pos[1] + 1) % env.length)]):
-                        possible_moves.append('right')
+                    if not env.is_wall([self.pos[0],(self.pos[1] + 1) % env.length]):
+                        possible_moves.append(action)
                 case "left":
-                    if not env.is_wall([self.pos[0],((self.pos[1] + 1) % env.length)]):
-                        possible_moves.append('left')
+                    if not env.is_wall([self.pos[0],(self.pos[1] - 1) % env.length]):
+                        possible_moves.append(action)
                 case "down":
-                    if not env.is_wall([self.pos[0],((self.pos[1] + 1) % env.length)]):
-                        possible_moves.append('down')
+                    if not env.is_wall([(self.pos[0] + 1) % env.height,self.pos[1]]):
+                        possible_moves.append(action)
                 case "up":
-                    if not env.is_wall([self.pos[0],((self.pos[1] + 1) % env.length)]):
-                        possible_moves.append('up')
+                    if not env.is_wall([(self.pos[0] - 1) % env.height,self.pos[1]]):
+                        possible_moves.append(action)
         return possible_moves
     def closest_food(self, env):
         """

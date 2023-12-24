@@ -33,7 +33,7 @@ class State:
         return self.util
 
     def actions(self):
-        actions = ["left", "right", "up", "down"]
+        actions = self.pacman.possible_moves(self.env)
         shuffle(actions)
         return actions
 
