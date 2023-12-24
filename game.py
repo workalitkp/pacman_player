@@ -7,32 +7,19 @@ from Environment import Env
 from Agent import Agent
 from State import State
 
-env = Env(length=18, height=9, difficulty=1)
-
-pacman = Agent(type="pacman", pos=[0, 0])
-ghost1 = Agent(type="ghost", pos=[0, 1])
-ghost2 = Agent(type="ghost", pos=[0, 16])
+# TODO: fix the fucking code for fuck sake you fucking peace of fuck
 
 
-env.insert_agent(pacman)
-env.insert_agent(ghost1)
-env.insert_agent(ghost2)
-
-
-# env.step(pacman,"up")
-# env.step(pacman,"right")
-# env.step(pacman,"down")
-mini_max = Minimax(game=env, depth=5)
-# env.step(minimax.get_action(state=state))
-cnt = 1
-actions = ["up", "down", "left", "right"]
-
+stdscr = curses.initscr()
 def draw_board(stdscr, board):
     stdscr.clear()
 
     for row, line in enumerate(board):
         stdscr.addstr(row, 0, line)
-
+    stdscr.addstr(11, 0, f"pacman : {pacman.pos}")
+    stdscr.addstr(12, 0, f"ghost_1 : {ghost1.pos}")
+    stdscr.addstr(13, 0, f"ghost_2 : {ghost2.pos}")
+    stdscr.addstr(14, 0, f"util : {state.util}")
     stdscr.refresh()
 
 def list2board(board):
@@ -55,17 +42,40 @@ def list2board(board):
         new_board[i] = " ".join(new_board[i])
     return new_board
 
-stdscr = curses.initscr()
+
+
+
+# create the game and insert agents
+env = Env(length=18, height=9, difficulty=0)
+
+pacman = Agent(type="pacman", pos=[4, 4])
+ghost1 = Agent(type="ghost", pos=[4, 5])
+ghost2 = Agent(type="ghost", pos=[4, 3])
+
+env.insert_agent(pacman)
+env.insert_agent(ghost1)
+env.insert_agent(ghost2)
+
+
+
+# creating minimax obj with given env 
+mini_max = Minimax(game=env, depth=3) # game is unnec
+
+
 state=State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
 # ,action = mini_max.get_action(state=state)
 
+actions = ["up", "down", "left", "right"]
+
 while not state.is_terminal():
     draw_board(stdscr=stdscr,board=list2board(env.board))
-    time.sleep(0.2)
+    # time.sleep(1)
+    be = pacman.closest_food(env=env)
     action = mini_max.get_action(state=state)
-    # env.step(action=action,agent=pacman)
+
+    env.step(action=action,agent=pacman)
     env.step(action=random.choice(actions),agent=ghost1)
     env.step(action=random.choice(actions),agent=ghost2)
     state = State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
-
-draw_board(stdscr=stdscr,board=["done"])
+draw_board(stdscr=stdscr,board=list2board(env.board))
+# draw_board(stdscr=stdscr,board=["done"])
