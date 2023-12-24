@@ -16,8 +16,6 @@ class Env:
         self.difficulty = difficulty
         if difficulty == 0:
             pass
-        if difficulty == 1:
-            wall = [1 for i in range(difficulty * 9)]
         else:
             wall = [1 for i in range(difficulty * 9)]
         for i in range(difficulty * 9):

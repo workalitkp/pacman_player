@@ -12,7 +12,7 @@ class Minimax:
         self.cache = {}
         self.ut = 0
 
-    def minimax(self, state, depth, maximizing_player):
+    def minimax(self, state, depth, player):
         """
         Applies the minimax algorithm to determine the best move for the current player.
 
@@ -23,32 +23,29 @@ class Minimax:
 
         Returns:
         - The utility value of the best move for the current player.
+
+        player: 0 for max player, 1 and 2 for min players
         """
         self.nodes += 1
         # if state in self.cache:
         #     return self.cache[state]
-        if depth == 0:
+        if depth == 0 or state.is_terminal():
             self.ut = state.utility()
-            logger.log(int(logging.INFO),f"util: {self.ut},{depth}")
-            return self.ut
-
-        if state.is_terminal():
-            self.ut = state.utility()
-            logger.log(int(logging.INFO),f"util: {self.ut},{depth}")
+            # logger.log(int(logging.INFO),f"util: {self.ut},{depth}")
             return self.ut
         
-        if maximizing_player:
+        if player==0:
             value = -math.inf
             a = state.successors()
             for child in a:
-                aa = self.minimax(child, depth - 1, False)
+                aa = self.minimax(child, depth - 1,(player + 1) % 3)
                 value = max(value, aa)
             # self.cache[state] = value
             return value
         else:
             value = math.inf
             for child in state.successors():
-                value = min(value, self.minimax(child, depth - 1, True))
+                value = min(value, self.minimax(child, depth - 1,(player + 1) % 3))
             # self.cache[state] = value
             return value
 
@@ -59,7 +56,7 @@ class Minimax:
 
         for action in state.actions():
             c_state = state.clone()
-            value = self.minimax(c_state.result(action), self.depth - 1, False)
+            value = self.minimax(c_state.result(action), self.depth - 1,0)
             if value > best_value:
                 best_value = value
                 best_action = action

@@ -19,17 +19,17 @@ class State:
         y = self.pacman.pos[1]
         pos = self.env.food[x][y]
         if self.pacman.pos == self.ghost1.pos or self.pacman.pos == self.ghost2.pos:
-            self.util += -1000000000
+            self.util = -1000000000
             # logger.log(int(logging.INFO),f"pacman: {self.pacman.pos}, ghost1: {self.ghost1.pos}, ghost2: {self.ghost2.pos}, util: {self.util}")
 
             # return self.util 
         elif pos:
-            self.util += 9
+            self.util = 10
             self.env.food[x][y] = 0
             # return self.util
         else:
-            self.util += 0
-        logger.info(f"util : {self.util}")
+            self.util = -1
+        logger.info(f"util-> : {self.util}")
         return self.util
 
     def actions(self):
@@ -38,15 +38,6 @@ class State:
         return actions
 
     def result(self,action):
-        # if action == "right":
-        #     self.pacman.pos[1] = (self.pacman.pos[1] + 1) % self.env.length
-        # elif action == "left":
-        #     self.pacman.pos[1] = (self.pacman.pos[1] - 1) % self.env.length
-        # elif action == "down":
-        #     self.pacman.pos[0] = (self.pacman.pos[0] + 1) % self.env.height
-        # elif action == "up":
-        #     self.pacman.pos[0] = (self.pacman.pos[0] - 1) % self.env.height
-        # return self
         self.env.step(self.pacman,action=action)
         return self
     def is_terminal(self):

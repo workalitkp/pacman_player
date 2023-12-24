@@ -43,7 +43,7 @@ def list2board(board):
 
 
 # create the game and insert agents
-env = Env(length=18, height=9, difficulty=1)
+env = Env(length=18, height=9, difficulty=4)
 
 pacman = Agent(type="pacman", pos=[4, 4])
 ghost1 = Agent(type="ghost", pos=[4, 5])
@@ -56,7 +56,7 @@ env.insert_agent(ghost2)
 
 
 # creating minimax obj with given env 
-mini_max = Minimax(game=env, depth=3) # game is unnec
+mini_max = Minimax(game=env, depth=6) # game is unnec
 
 
 state=State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
