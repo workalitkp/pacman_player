@@ -17,6 +17,7 @@ def draw_board(stdscr, board):
     stdscr.addstr(12, 0, f"ghost_1 : {ghost1.pos}")
     stdscr.addstr(13, 0, f"ghost_2 : {ghost2.pos}")
     stdscr.addstr(14, 0, f"util : {state.util}")
+    stdscr.addstr(15, 0, f"time per move : {time_diff}")
     stdscr.refresh()
 
 def list2board(board):
@@ -43,7 +44,7 @@ def list2board(board):
 
 
 # create the game and insert agents
-env = Env(length=18, height=9, difficulty=4)
+env = Env(length=18, height=9, difficulty=2)
 
 pacman = Agent(type="pacman", pos=[4, 4])
 ghost1 = Agent(type="ghost", pos=[4, 5])
@@ -56,21 +57,23 @@ env.insert_agent(ghost2)
 
 
 # creating minimax obj with given env 
-mini_max = Minimax(game=env, depth=6) # game is unnec
+mini_max = Minimax(game=env, depth=3)
 
 
 state=State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
 # ,action = mini_max.get_action(state=state)
 
 actions = ["up", "down", "left", "right"]
-
+time_diff = 0
 while not state.is_terminal():
     draw_board(stdscr=stdscr,board=list2board(env.board))
-    # time.sleep(1)
-    be = pacman.closest_food(env=env)
+    # time.sleep(0.3)
+    # be = env.find_shortest_path(pacman.pos)[0]
+    t_b = time.time()
     action = mini_max.get_action(state=state)
-
+    time_diff = time.time()-t_b
     env.step(action=action,agent=pacman)
+    env.food[pacman.pos[0]][pacman.pos[1]] = 0
     ghost1_moves = ghost1.possible_moves(env)
     ghost2_moves = ghost2.possible_moves(env)
     env.step(action=random.choice(ghost1_moves),agent=ghost1)

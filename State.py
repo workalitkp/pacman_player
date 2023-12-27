@@ -25,16 +25,26 @@ class State:
             # return self.util 
         elif pos:
             self.util = 10
-            self.env.food[x][y] = 0
             # return self.util
         else:
             self.util = -1
         logger.info(f"util-> : {self.util}")
         return self.util
-
+    def conv(self,action):
+        if action == (0,-1):
+            return "left"
+        elif action == (0,1):
+            return "right"
+        elif action == (-1,0):
+            return "up"
+        elif action == (1,0):
+            return "down"
     def actions(self):
         actions = self.pacman.possible_moves(self.env)
-        shuffle(actions)
+        be = self.env.find_shortest_path(self.pacman.pos)[0]
+        a = self.conv(be)
+        actions.remove(a)
+        actions = [a] + actions
         return actions
 
     def result(self,action):
