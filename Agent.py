@@ -25,29 +25,6 @@ class Agent:
                     if not env.is_wall([(self.pos[0] - 1) % env.height,self.pos[1]]):
                         possible_moves.append(action)
         return possible_moves
-    def closest_food(self, env):
-        """
-        Returns the move towards the closest food using DFS.
-
-        Args:
-            env (Environment): The game environment.
-
-        Returns:
-            str: The move towards the closest food.
-        """
-        stack = [(self.pos, [])]
-        visited = set()
-
-        while stack:
-            (node, path) = stack.pop()
-            if env.is_food(node):
-                return path[0] if path else None
-            if tuple(node) not in visited:
-                visited.add(tuple(node))
-                for move, new_node in env.get_neighbors(node):
-                    stack.append((new_node, path + [move]))
-
-        return None
     def __str__(self) -> str:
         return f"{self.type} >  {self.pos}"
     

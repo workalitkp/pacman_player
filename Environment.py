@@ -4,12 +4,19 @@ import math
 class Env:
     def __init__(self, length, height, difficulty=1) -> None:
         '''
-        0 -> food
-        1 -> wall
-        2 -> pacman
-        3 -> ghost
-        4 -> empty
-        5 -> ghost
+        Initializes the environment with the specified length, height, and difficulty.
+
+        Parameters:
+        - length (int): The length of the environment.
+        - height (int): The height of the environment.
+        - difficulty (int, optional): The difficulty level of the environment. Defaults to 1.
+
+        Attributes:
+        - length (int): The length of the environment.
+        - height (int): The height of the environment.
+        - board (list): The game board represented as a 2D list.
+        - food (list): The food positions represented as a 2D list.
+        - difficulty (int): The difficulty level of the environment.
         '''
         self.length = length
         self.height = height
@@ -25,6 +32,12 @@ class Env:
             self.board[x][y] = wall[i]
 
     def insert_agent(self, agent):
+        '''
+        Inserts the agent into the environment.
+
+        Parameters:
+        - agent (Agent): The agent to be inserted.
+        '''
         if agent.type == 2:
             self.board[agent.pos[0]][agent.pos[1]] = 2
         else:
@@ -33,7 +46,14 @@ class Env:
 
             elif(self.board[agent.pos[0]][agent.pos[1]] == 0):
                 self.board[agent.pos[0]][agent.pos[1]] = 5
+
     def remove_agent(self, agent):
+        '''
+        Removes the agent from the environment.
+
+        Parameters:
+        - agent (Agent): The agent to be removed.
+        '''
         if agent.type==3:
             if self.board[agent.pos[0]][agent.pos[1]] == 5:
                 self.board[agent.pos[0]][agent.pos[1]] = 0
@@ -41,8 +61,18 @@ class Env:
                 self.board[agent.pos[0]][agent.pos[1]] = 4
         else:
             self.board[agent.pos[0]][agent.pos[1]] = 4
-            
+
     def step(self, agent, action):
+        '''
+        Takes a step in the environment based on the agent's action.
+
+        Parameters:
+        - agent (Agent): The agent taking the step.
+        - action (str): The action to be taken by the agent.
+
+        Returns:
+        - self (Env): The updated environment after the step.
+        '''
         self.remove_agent(agent)
         match action:
             case "right":
@@ -53,57 +83,64 @@ class Env:
                 agent.pos[0] = (agent.pos[0] + 1) % self.height
             case "up":
                 agent.pos[0] = (agent.pos[0] - 1) % self.height
+        score = -1
+        if self.is_food(agent.pos):
+            score = 10
         self.insert_agent(agent)
-        # self.food[agent.pos[0]][agent.pos[1]] = 0
-        return self
-    def is_wall(self,coord):
+        return self,score
+
+    def is_wall(self, coord):
+        '''
+        Checks if the given coordinate is a wall.
+
+        Parameters:
+        - coord (tuple): The coordinate to be checked.
+
+        Returns:
+        - bool: True if the coordinate is a wall, False otherwise.
+        '''
         if self.board[coord[0]][coord[1]] == 1:
             return True
         return False
-    def is_food(self,coord):
+
+    def is_food(self, coord):
+        '''
+        Checks if the given coordinate has food.
+
+        Parameters:
+        - coord (tuple): The coordinate to be checked.
+
+        Returns:
+        - bool: True if the coordinate has food, False otherwise.
+        '''
         if self.board[coord[0]][coord[1]] == 0:
             return True
         return False
-    def is_ghost(self,coord):
+
+    def is_ghost(self, coord):
+        '''
+        Checks if the given coordinate has a ghost.
+
+        Parameters:
+        - coord (tuple): The coordinate to be checked.
+
+        Returns:
+        - bool: True if the coordinate has a ghost, False otherwise.
+        '''
         if self.board[coord[0]][coord[1]] == 5:
             return True
         return False
-    def get_neighbors(self, coord):
-        neighbors = []
-        for action in ["left","right","up","down"]:
-            match action:
-                case "right":
-                    pos = [coord[0],((coord[1] + 1) % self.length)]
-                    if not self.is_wall(pos) and not self.is_ghost(pos):
-                        neighbors.append(('right',[coord[0],((coord[1] + 1) % self.length)]))
-                case "left":
-                    pos = [coord[0],((coord[1] - 1) % self.length)]
-                    if not self.is_wall(pos) and not self.is_ghost(pos):
-                        neighbors.append(('left',[coord[0],((coord[1] - 1) % self.length)]))
-                case "down":
-                    pos = [(coord[0] + 1) % self.height,coord[1]]
-                    if not self.is_wall(pos) and not self.is_ghost(pos):
-                        neighbors.append(('down',[(coord[0] + 1) % self.height,coord[1]]))
-                case "up":
-                    pos = [(coord[0] - 1) % self.height,coord[1]]
-                    if not self.is_wall(pos) and not self.is_ghost(pos):
-                        neighbors.append(('up',[(coord[0] - 1) % self.height,coord[1]]))
-        return neighbors
-    def find_nearest_food(self, position):
-        min_distance = math.inf
-        nearest_food = None
-
-        for i in range(self.height):
-            for j in range(self.length):
-                if self.board[i][j] == 0:  # if the cell contains food
-                    distance = abs(position[0] - i) + abs(position[1] - j)  # calculate Manhattan distance
-                    if distance < min_distance:
-                        min_distance = distance
-                        nearest_food = (i, j)
-
-        return nearest_food
 
     def find_shortest_path(self, start):
+        '''
+        Finds the shortest path from the given start coordinate to the nearest food.
+
+        Parameters:
+        - start (tuple): The starting coordinate.
+
+        Returns:
+        - list or None: The shortest path as a list of directions (dx, dy) or None if no path is found.
+        '''
         start = tuple(start)
 
         # Directions for left, right, up, down
@@ -123,10 +160,16 @@ class Env:
                     if self.board[nx][ny] == 0:
                         return path[(nx, ny)]
         return None
+
     def __str__(self) -> str:
+        '''
+        Returns a string representation of the environment.
+
+        Returns:
+        - str: The string representation of the environment.
+        '''
         return str(self.board)
 
 if __name__ == "__main__":
     env = Env(18,9,2)
     env.board[4][4] = 1
-    print(env.get_neighbors([4,4]))

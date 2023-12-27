@@ -18,6 +18,7 @@ def draw_board(stdscr, board):
     stdscr.addstr(13, 0, f"ghost_2 : {ghost2.pos}")
     stdscr.addstr(14, 0, f"util : {state.util}")
     stdscr.addstr(15, 0, f"time per move : {time_diff}")
+    stdscr.addstr(16, 0, f"pacman score: {total_score}")
     stdscr.refresh()
 
 def list2board(board):
@@ -61,18 +62,18 @@ mini_max = Minimax(game=env, depth=3)
 
 
 state=State(env=env,agent=pacman,ghost1=ghost1,ghost2=ghost2)
-# ,action = mini_max.get_action(state=state)
 
 actions = ["up", "down", "left", "right"]
 time_diff = 0
+total_score = 0
 while not state.is_terminal():
     draw_board(stdscr=stdscr,board=list2board(env.board))
-    # time.sleep(0.3)
     # be = env.find_shortest_path(pacman.pos)[0]
     t_b = time.time()
     action = mini_max.get_action(state=state)
     time_diff = time.time()-t_b
-    env.step(action=action,agent=pacman)
+    env,score=env.step(action=action,agent=pacman)
+    total_score += score
     env.food[pacman.pos[0]][pacman.pos[1]] = 0
     ghost1_moves = ghost1.possible_moves(env)
     ghost2_moves = ghost2.possible_moves(env)
